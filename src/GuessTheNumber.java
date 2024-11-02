@@ -1,21 +1,8 @@
-import java.util.Random;
 import java.util.Scanner;
 
-interface NumberSource {
-    int generateNumber(int min, int max);
-}
-
-class RandomNumberGenerator implements NumberSource {
-    private Random random = new Random();
-
-    @Override
-    public int generateNumber(int min, int max) {
-        return random.nextInt(max - min + 1) + min;
-    }
-}
 
 public class GuessTheNumber {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         while (true) {
@@ -24,27 +11,25 @@ public class GuessTheNumber {
             System.out.println("2. Середній (1-100)");
             System.out.println("3. Важкий (1-200)");
 
-            int min = 1, max = 100;
+            int min = 1;
             int choice = scanner.nextInt();
 
-            switch (choice) {
-                case 1:
-                    max = 50;
-                    break;
-                case 2:
-                    max = 100;
-                    break;
-                case 3:
-                    max = 200;
-                    break;
-                default:
+            int max = switch (choice) {
+                case 1 -> 50;
+                case 2 -> 100;
+                case 3 -> 200;
+                default -> {
                     System.out.println("Невірний вибір. Вибрано середній рівень (1-100).");
-                    max = 100;
-            }
+                    yield 100;
+                }
+            };
 
-            NumberSource numberSource = new RandomNumberGenerator();
+            NumberSource numberSource = (NumberSource) selectNumberSource();
             int numberToGuess = numberSource.generateNumber(min, max);
-            playGame(numberToGuess, min, max);
+
+            Player player = selectPlayer();
+            playGame(numberToGuess, min, max, player);
+
 
             System.out.println("Бажаєте зіграти ще раз? (y/n)");
             char playAgain = scanner.next().charAt(0);
@@ -55,15 +40,48 @@ public class GuessTheNumber {
         scanner.close();
     }
 
-    private static void playGame(int numberToGuess, int min, int max) {
+    private static Object selectNumberSource() {
+        System.out.println("Виберіть джерело для загадування числа:");
+        System.out.println("1. Випадкове число");
+        System.out.println("2. Введення числа вручну");
+
+        int sourceChoice = scanner.nextInt();
+        return switch (sourceChoice) {
+            case 1 -> new RandomNumberGenerator();
+            case 2 -> new KeyboardNumberInput();
+            default -> {
+                System.out.println("Невірний вибір. Вибрано випадкове число.");
+                yield new RandomNumberGenerator();
+            }
+        };
+    }
+
+    private static Player selectPlayer() {
+        System.out.println("Виберіть тип гравця:");
+        System.out.println("1. Ручний гравець");
+        System.out.println("2. AI гравець");
+
+        int playerChoice = scanner.nextInt();
+        return switch (playerChoice) {
+            case 1 -> new ManualPlayer();
+            case 2 -> new AIAssistedPlayer();
+            default -> {
+                System.out.println("Невірний вибір. Вибрано ручного гравця.");
+                yield new ManualPlayer();
+            }
+        };
+    }
+
+
+    private static void playGame(int numberToGuess, int min, int max, Player player) {
         int numberOfTries = 0;
         boolean hasGuessed = false;
 
-        System.out.println("Я загадал число від " + min + " до " + max + ". Спробуйте його відгадати!");
+        System.out.println("Я загадав число від " + min + " до " + max + ". Спробуйте його відгадати!");
 
         while (!hasGuessed) {
             System.out.print("Введіть своє число: ");
-            int guess = scanner.nextInt();
+            int guess = player.makeGuess(min, max);
             numberOfTries++;
 
             if (guess < min || guess > max) {
