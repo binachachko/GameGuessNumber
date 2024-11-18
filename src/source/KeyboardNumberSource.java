@@ -1,6 +1,8 @@
+package Sourse;
+
 import java.util.Scanner;
 
-class KeyboardNumberInput implements NumberSource {
+public class KeyboardNumberSource implements NumberSource {
     private final Scanner scanner = new Scanner(System.in);
 
     @Override

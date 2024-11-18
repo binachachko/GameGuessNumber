@@ -1,6 +1,8 @@
+package Sourse;
+
 import java.util.Random;
 
-class RandomNumberGenerator implements NumberSource {
+public class RandomNumberSource implements NumberSource {
     private final Random random = new Random();
 
     @Override
