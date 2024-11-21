@@ -1,6 +1,8 @@
+package player;
+
 import java.util.Scanner;
 
-class ManualPlayer implements Player {
+public class ManualPlayer implements Player {
     private final Scanner scanner = new Scanner(System.in);
 
     @Override

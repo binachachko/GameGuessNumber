@@ -1,6 +1,8 @@
+package player;
+
 import java.util.Random;
 
-class AIAssistedPlayer implements Player {
+public class AIAssistedPlayer implements Player {
     private final Random random = new Random();
 
     @Override

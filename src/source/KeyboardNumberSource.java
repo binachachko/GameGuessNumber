@@ -1,4 +1,4 @@
-package Sourse;
+package source;
 
 import java.util.Scanner;
 

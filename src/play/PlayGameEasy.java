@@ -1,9 +1,10 @@
 package play;
 import player.Player;
 
-public class PlayGame implements GameLogic {
+public class PlayGameEasy implements GameLogic {
 
-    public void Game(int numberToGuess, int min, int max, Player player) {
+    @Override
+    public void playGame(int numberToGuess, int min, int max, Player player) {
         int numberOfTries = 0;
         boolean hasGuessed = false;
 
