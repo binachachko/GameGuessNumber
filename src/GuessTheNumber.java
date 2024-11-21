@@ -10,44 +10,46 @@ import source.RandomNumberSource;
 
 import java.util.Scanner;
 
-private static final Scanner scanner = new Scanner(System.in);
+public class GuessTheNumber {
 
-public static void main(String[] args) {
-    while (true) {
-        System.out.println("Виберіть рівень складності:");
-        System.out.println("1. Легкий (1-50)");
-        System.out.println("2. Середній (1-100)");
-        System.out.println("3. Важкий (1-200)");
+    private static final Scanner scanner = new Scanner(System.in);
 
-        int min = 1;
-        int choice = scanner.nextInt();
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("Виберіть рівень складності:");
+            System.out.println("1. Легкий (1-50)");
+            System.out.println("2. Середній (1-100)");
+            System.out.println("3. Важкий (1-200)");
 
-        int max = switch (choice) {
-            case 1 -> 50;
-            case 2 -> 100;
-            case 3 -> 200;
-            default -> {
-                System.out.println("Невірний вибір. Вибрано середній рівень (1-100).");
-                yield 100;
+            int min = 1;
+            int choice = scanner.nextInt();
+
+            int max = switch (choice) {
+                case 1 -> 50;
+                case 2 -> 100;
+                case 3 -> 200;
+                default -> {
+                    System.out.println("Невірний вибір. Вибрано середній рівень (1-100).");
+                    yield 100;
+                }
+            };
+
+            NumberSource numberSource = selectNumberSource();
+            int numberToGuess = numberSource.generateNumber(min, max);
+
+            Player player = selectPlayer();
+
+            GameLogic gameLogic = selectGameLogic();
+            gameLogic.playGame(numberToGuess, min, max, player);
+
+            System.out.println("Бажаєте зіграти ще раз? (y/n)");
+            char playAgain = scanner.next().charAt(0);
+            if (playAgain != 'y' && playAgain != 'Y') {
+                break;
             }
-        };
-
-        NumberSource numberSource = selectNumberSource();
-        int numberToGuess = numberSource.generateNumber(min, max);
-
-        Player player = selectPlayer();
-
-        GameLogic gameLogic = selectGameLogic();
-        gameLogic.playGame(numberToGuess, min, max, player);
-
-        System.out.println("Бажаєте зіграти ще раз? (y/n)");
-        char playAgain = scanner.next().charAt(0);
-        if (playAgain != 'y' && playAgain != 'Y') {
-            break;
         }
+        scanner.close();
     }
-    scanner.close();
-}
 
     private static NumberSource selectNumberSource() {
         System.out.println("Виберіть джерело для загадування числа:");
@@ -96,3 +98,4 @@ public static void main(String[] args) {
             }
         };
     }
+}
